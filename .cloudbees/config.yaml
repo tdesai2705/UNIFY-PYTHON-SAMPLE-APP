@@ -1,0 +1,8 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: configuration
+
+# Disable security scanners that require credentials
+security:
+  scanners:
+    blackduck:
+      enabled: false
