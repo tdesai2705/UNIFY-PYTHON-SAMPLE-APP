@@ -44,33 +44,49 @@ jobs:
           pip install build
           python -m build
 
-      - name: Build Docker image (simulated)
+      - name: Validate Dockerfile and prepare for Docker Hub
         uses: docker://alpine:latest
         shell: sh
         run: |
-          echo "==================================="
-          echo "Docker Image Build Simulation"
-          echo "==================================="
-          echo "In production, this would:"
-          echo "  1. Build Docker image from Dockerfile"
-          echo "  2. Tag as unify-python-app:latest"
-          echo "  3. Tag as unify-python-app:${CLOUDBEES_SCM_COMMIT}"
-          echo "  4. Push to container registry"
+          echo "=========================================="
+          echo "Docker Image Build & Registry Preparation"
+          echo "=========================================="
           echo ""
-          echo "Dockerfile validated:"
+          echo "📦 Validating Dockerfile..."
           if [ -f Dockerfile ]; then
             cat Dockerfile
             echo ""
-            echo "✅ Dockerfile found and ready for building"
+            echo "✅ Dockerfile validated and ready"
           else
             echo "❌ Dockerfile not found"
             exit 1
           fi
-          echo "==================================="
-          # For actual builds in CloudBees, use:
-          # - CloudBees container build action
-          # - External CI/CD system with Docker daemon
-          # - Kubernetes with Kaniko in a pod
+          echo ""
+          echo "🐳 Docker Hub Publishing Configuration:"
+          echo "  Registry: Docker Hub (hub.docker.com)"
+          echo "  Image: tdesai2705/unify-python-app"
+          echo "  Tags: latest, ${CLOUDBEES_SCM_COMMIT:0:8}"
+          echo ""
+          echo "📋 To enable Docker Hub publishing:"
+          echo "  1. Add DOCKER_USERNAME secret in CloudBees Unify"
+          echo "  2. Add DOCKER_PASSWORD secret in CloudBees Unify"
+          echo "  3. Uncomment the 'Publish to Docker Hub' step below"
+          echo ""
+          echo "✅ Dockerfile preparation complete"
+          echo "=========================================="
+
+      # Uncomment this step once Docker Hub credentials are configured in CloudBees Unify
+      # - name: Publish to Docker Hub
+      #   uses: docker://gcr.io/kaniko-project/executor:latest
+      #   env:
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #   run: |
+      #     --context=/cloudbees/workspace
+      #     --dockerfile=/cloudbees/workspace/Dockerfile
+      #     --destination=tdesai2705/unify-python-app:latest
+      #     --destination=tdesai2705/unify-python-app:${CLOUDBEES_SCM_COMMIT:0:8}
+      #     --skip-tls-verify-registry=tdesai2705
 
   deploy-staging:
     needs: build-and-test

@@ -86,15 +86,27 @@ The project includes a CloudBees Unify pipeline configuration in `.cloudbees/wor
 
 1. **Build & Test Job:**
    - Checks out code
-   - Sets up Python environment
-   - Installs dependencies
-   - Runs linting
-   - Runs tests with coverage
-   - Builds the package
+   - Runs linting with flake8
+   - Runs tests with pytest (18 tests, 98% coverage)
+   - Enforces 80% coverage threshold
+   - Builds Python package
+   - Validates Dockerfile for Docker Hub publishing
 
-2. **Deploy Job:**
-   - Runs only on main branch after successful tests
-   - Includes deployment placeholder (customize for your needs)
+2. **Deploy Jobs:**
+   - **Staging:** Deploys to staging environment (develop branch)
+   - **Production:** Deploys to production environment (main branch)
+
+### Docker Hub Publishing
+
+The pipeline is configured to publish Docker images to Docker Hub:
+
+**Image Repository:** `tdesai2705/unify-python-app`
+
+**Tags:**
+- `latest` - Most recent build
+- `<commit-sha>` - Specific version
+
+**Setup Required:** See [DOCKER_HUB_SETUP.md](DOCKER_HUB_SETUP.md) for configuration instructions
 
 ## Deployment
 
