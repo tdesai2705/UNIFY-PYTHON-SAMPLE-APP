@@ -44,18 +44,21 @@ jobs:
           pip install build
           python -m build
 
-      - name: Build Docker image
-        uses: docker://docker:latest
+      - name: Build Docker image with Kaniko
+        uses: docker://gcr.io/kaniko-project/executor:latest
         shell: sh
         run: |
-          docker build -t unify-python-app:latest .
-          docker build -t unify-python-app:$CLOUDBEES_SCM_COMMIT .
+          /kaniko/executor \
+            --context=/cloudbees/workspace \
+            --dockerfile=/cloudbees/workspace/Dockerfile \
+            --destination=unify-python-app:latest \
+            --no-push \
+            --tar-path=/cloudbees/workspace/unify-python-app.tar
           echo "Docker image built successfully!"
-          docker images | grep unify-python-app
-          # To push to a registry, uncomment and configure:
-          # docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          # docker tag unify-python-app:latest yourregistry/unify-python-app:latest
-          # docker push yourregistry/unify-python-app:latest
+          ls -lh unify-python-app.tar
+          # To push to a registry, remove --no-push and add credentials:
+          # --destination=yourregistry/unify-python-app:latest
+          # --destination=yourregistry/unify-python-app:$CLOUDBEES_SCM_COMMIT
 
   deploy:
     needs: build-and-test
