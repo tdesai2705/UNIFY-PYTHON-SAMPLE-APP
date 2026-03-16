@@ -1,0 +1,77 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+
+name: Python CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    steps:
+      - name: Checkout code
+        uses: cloudbees-io/checkout@v1
+
+      - name: Set up Python
+        uses: docker://python:3.9
+        shell: sh
+        run: |
+          python --version
+          pip --version
+
+      - name: Install dependencies
+        uses: docker://python:3.9
+        shell: sh
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          elif [ -f pyproject.toml ]; then
+            pip install .
+          fi
+
+      - name: Run linting
+        uses: docker://python:3.9
+        shell: sh
+        run: |
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Run tests
+        uses: docker://python:3.9
+        shell: sh
+        run: |
+          pip install pytest pytest-cov
+          pytest --cov=. --cov-report=xml --cov-report=term
+
+      - name: Build package
+        uses: docker://python:3.9
+        shell: sh
+        run: |
+          pip install build
+          python -m build
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: cloudbees-io/checkout@v1
+
+      - name: Deploy to production
+        uses: docker://python:3.9
+        shell: sh
+        run: |
+          echo "Deploying application..."
+          # Add your deployment commands here
+          # Examples:
+          # - Deploy to AWS, GCP, Azure
+          # - Push to container registry
+          # - Deploy to serverless platform
+          echo "Deployment completed successfully!"
