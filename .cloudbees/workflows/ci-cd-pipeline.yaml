@@ -19,13 +19,6 @@ jobs:
       - name: Checkout code
         uses: cloudbees-io/checkout@v1
 
-      - name: Set up Python
-        uses: docker://python:3.9
-        shell: sh
-        run: |
-          python --version
-          pip --version
-
       - name: Install dependencies and run linting
         uses: docker://python:3.9
         shell: sh
