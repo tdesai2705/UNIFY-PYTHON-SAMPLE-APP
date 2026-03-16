@@ -1,10 +1,12 @@
 """
 Simple Flask application for CloudBees Unify CI/CD demo
+Version: 1.1.0-staging
 """
 from flask import Flask, jsonify, request
 from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
+app.config['ENV'] = 'staging'
 
 # Swagger UI configuration
 SWAGGER_URL = '/api/docs'
