@@ -91,10 +91,12 @@ The project includes a CloudBees Unify pipeline configuration in `.cloudbees/wor
    - Enforces 80% coverage threshold
    - Builds Python package
    - Validates Dockerfile for Docker Hub publishing
+   - **Failure notifications** - Alerts on build/test failures
 
 2. **Deploy Jobs:**
    - **Staging:** Deploys to staging environment (develop branch)
    - **Production:** Deploys to production environment (main branch)
+   - **Failure notifications** - Alerts on deployment failures
 
 ### Docker Hub Publishing
 
@@ -107,6 +109,21 @@ The pipeline is configured to publish Docker images to Docker Hub:
 - `<commit-sha>` - Specific version
 
 **Setup Required:** See [DOCKER_HUB_SETUP.md](DOCKER_HUB_SETUP.md) for configuration instructions
+
+### Failure Notifications
+
+The pipeline includes automatic failure notifications:
+
+**Default:** Console logging (enabled by default)
+
+**Optional Integrations:**
+- Slack
+- Email (SMTP)
+- Microsoft Teams
+- PagerDuty (for critical alerts)
+- Discord
+
+**Setup Guide:** See [NOTIFICATIONS_SETUP.md](NOTIFICATIONS_SETUP.md) for configuration instructions
 
 ## Deployment
 

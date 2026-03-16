@@ -88,6 +88,58 @@ jobs:
       #     --destination=tdesai2705/unify-python-app:${CLOUDBEES_SCM_COMMIT:0:8}
       #     --skip-tls-verify-registry=tdesai2705
 
+      - name: Send failure notification
+        if: failure()
+        uses: docker://alpine:latest
+        shell: sh
+        run: |
+          echo "=========================================="
+          echo "🚨 PIPELINE FAILURE ALERT"
+          echo "=========================================="
+          echo ""
+          echo "❌ Pipeline Status: FAILED"
+          echo "📦 Repository: tdesai2705/UNIFY-PYTHON-SAMPLE-APP"
+          echo "🌿 Branch: ${CLOUDBEES_SCM_BRANCH}"
+          echo "📝 Commit: ${CLOUDBEES_SCM_COMMIT:0:8}"
+          echo "👤 Author: ${CLOUDBEES_SCM_AUTHOR:-TEJAS DESAI}"
+          echo "⏰ Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "🔗 Build URL: ${CLOUDBEES_RUN_URL:-N/A}"
+          echo ""
+          echo "📋 Failed Job: build-and-test"
+          echo "💡 Action Required: Check pipeline logs for details"
+          echo ""
+          echo "=========================================="
+          echo ""
+          echo "📧 Notification Channels (configure as needed):"
+          echo ""
+          echo "  • Slack Integration:"
+          echo "    - Add SLACK_WEBHOOK_URL secret"
+          echo "    - Use: curl -X POST -H 'Content-type: application/json'"
+          echo "    - Endpoint: \$SLACK_WEBHOOK_URL"
+          echo ""
+          echo "  • Email Integration:"
+          echo "    - Configure SMTP settings"
+          echo "    - Use: sendmail or mail command"
+          echo ""
+          echo "  • Microsoft Teams:"
+          echo "    - Add TEAMS_WEBHOOK_URL secret"
+          echo "    - Use: curl -X POST webhook URL"
+          echo ""
+          echo "  • PagerDuty:"
+          echo "    - Add PAGERDUTY_API_KEY secret"
+          echo "    - Use: PagerDuty Events API"
+          echo ""
+          echo "=========================================="
+          echo "✅ Failure notification logged"
+          echo "=========================================="
+
+          # Uncomment and configure for Slack notifications:
+          # if [ -n "$SLACK_WEBHOOK_URL" ]; then
+          #   curl -X POST -H 'Content-type: application/json' \
+          #     --data "{\"text\":\"🚨 Pipeline Failed: ${CLOUDBEES_SCM_BRANCH} - ${CLOUDBEES_SCM_COMMIT:0:8}\"}" \
+          #     $SLACK_WEBHOOK_URL
+          # fi
+
   deploy-staging:
     needs: build-and-test
     if: cloudbees.scm.branch == 'develop'
@@ -118,6 +170,21 @@ jobs:
           # - eb deploy staging-env
           # - heroku deploy --app staging-app
           echo "✅ Staging deployment completed successfully!"
+          echo "=========================================="
+
+      - name: Send staging deployment failure notification
+        if: failure()
+        uses: docker://alpine:latest
+        shell: sh
+        run: |
+          echo "=========================================="
+          echo "🚨 STAGING DEPLOYMENT FAILURE"
+          echo "=========================================="
+          echo "❌ Staging deployment failed!"
+          echo "🌿 Branch: develop"
+          echo "📝 Commit: ${CLOUDBEES_SCM_COMMIT:0:8}"
+          echo "⏰ Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "🔗 Build URL: ${CLOUDBEES_RUN_URL:-N/A}"
           echo "=========================================="
 
   deploy-production:
@@ -151,4 +218,21 @@ jobs:
           # - eb deploy production-env
           # - heroku deploy --app production-app
           echo "✅ Production deployment completed successfully!"
+          echo "=========================================="
+
+      - name: Send production deployment failure notification
+        if: failure()
+        uses: docker://alpine:latest
+        shell: sh
+        run: |
+          echo "=========================================="
+          echo "🚨 PRODUCTION DEPLOYMENT FAILURE"
+          echo "=========================================="
+          echo "❌ Production deployment failed!"
+          echo "🌿 Branch: main"
+          echo "📝 Commit: ${CLOUDBEES_SCM_COMMIT:0:8}"
+          echo "⏰ Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "🔗 Build URL: ${CLOUDBEES_RUN_URL:-N/A}"
+          echo ""
+          echo "⚠️  CRITICAL: Production deployment requires immediate attention!"
           echo "=========================================="
