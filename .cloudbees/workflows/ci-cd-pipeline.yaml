@@ -44,6 +44,19 @@ jobs:
           pip install build
           python -m build
 
+      - name: Build Docker image
+        uses: docker://docker:latest
+        shell: sh
+        run: |
+          docker build -t unify-python-app:latest .
+          docker build -t unify-python-app:$CLOUDBEES_SCM_COMMIT .
+          echo "Docker image built successfully!"
+          docker images | grep unify-python-app
+          # To push to a registry, uncomment and configure:
+          # docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          # docker tag unify-python-app:latest yourregistry/unify-python-app:latest
+          # docker push yourregistry/unify-python-app:latest
+
   deploy:
     needs: build-and-test
     if: cloudbees.scm.branch == 'main'
