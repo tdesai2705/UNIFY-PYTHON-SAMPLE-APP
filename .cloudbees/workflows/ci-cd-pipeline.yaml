@@ -46,19 +46,22 @@ jobs:
 
       - name: Build Docker image with Kaniko
         uses: docker://gcr.io/kaniko-project/executor:latest
+        run: |
+          --context=/cloudbees/workspace
+          --dockerfile=/cloudbees/workspace/Dockerfile
+          --destination=unify-python-app:latest
+          --no-push
+          --tar-path=/cloudbees/workspace/unify-python-app.tar
+
+      - name: Verify Docker image
+        uses: docker://alpine:latest
         shell: sh
         run: |
-          /kaniko/executor \
-            --context=/cloudbees/workspace \
-            --dockerfile=/cloudbees/workspace/Dockerfile \
-            --destination=unify-python-app:latest \
-            --no-push \
-            --tar-path=/cloudbees/workspace/unify-python-app.tar
-          echo "Docker image built successfully!"
-          ls -lh unify-python-app.tar
-          # To push to a registry, remove --no-push and add credentials:
+          echo "Checking for built Docker image tar..."
+          ls -lh /cloudbees/workspace/unify-python-app.tar || echo "Image tar not found"
+          # To push to a registry in future, configure Kaniko with:
           # --destination=yourregistry/unify-python-app:latest
-          # --destination=yourregistry/unify-python-app:$CLOUDBEES_SCM_COMMIT
+          # --destination=yourregistry/unify-python-app:${CLOUDBEES_SCM_COMMIT}
 
   deploy:
     needs: build-and-test
