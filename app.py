@@ -2,8 +2,23 @@
 Simple Flask application for CloudBees Unify CI/CD demo
 """
 from flask import Flask, jsonify, request
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
+
+# Swagger UI configuration
+SWAGGER_URL = '/api/docs'
+API_URL = '/swagger.json'
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "UNIFY Python Sample API"
+    }
+)
+
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 # In-memory storage for items
 items = {
@@ -11,12 +26,21 @@ items = {
 }
 
 
+@app.route('/swagger.json')
+def swagger_spec():
+    """Serve Swagger specification"""
+    import json
+    with open('swagger.json', 'r') as f:
+        return jsonify(json.load(f))
+
+
 @app.route('/')
 def home():
     """Home endpoint"""
     return jsonify({
         'message': 'Welcome to the Python Sample App!',
-        'status': 'success'
+        'status': 'success',
+        'documentation': 'Visit /api/docs for API documentation'
     })
 
 

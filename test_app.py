@@ -23,6 +23,16 @@ def test_home(client):
     data = response.get_json()
     assert data['message'] == 'Welcome to the Python Sample App!'
     assert data['status'] == 'success'
+    assert 'documentation' in data
+
+
+def test_swagger_spec(client):
+    """Test Swagger specification endpoint"""
+    response = client.get('/swagger.json')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'openapi' in data
+    assert data['info']['title'] == 'UNIFY Python Sample API'
 
 
 def test_health(client):

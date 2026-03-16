@@ -4,19 +4,43 @@ A sample Python Flask application with CI/CD pipeline for CloudBees Unify.
 
 ## Features
 
-- Simple REST API built with Flask
+- RESTful API built with Flask
+- Full CRUD operations for items
+- Swagger/OpenAPI documentation
 - Health check endpoint
 - Greeting API with parameters
-- Unit tests with pytest
-- Code coverage reporting
+- Unit tests with pytest (98% coverage)
+- Code coverage reporting with threshold enforcement
 - Linting with flake8
 - Automated CI/CD pipeline via CloudBees Unify
+- Docker support
+
+## API Documentation
+
+Interactive API documentation is available via Swagger UI:
+
+**Local:** http://localhost:5000/api/docs
+
+The Swagger UI provides:
+- Complete API reference
+- Try-it-out functionality for all endpoints
+- Request/response schemas
+- Example payloads
 
 ## API Endpoints
 
-- `GET /` - Home endpoint
+### General
+- `GET /` - Home endpoint with API information
 - `GET /health` - Health check
 - `GET /api/greet/<name>` - Personalized greeting
+- `GET /api/docs` - Swagger UI documentation
+
+### Items CRUD
+- `GET /api/items` - Get all items
+- `GET /api/items/<id>` - Get item by ID
+- `POST /api/items` - Create new item
+- `PUT /api/items/<id>` - Update item
+- `DELETE /api/items/<id>` - Delete item
 
 ## Local Development
 
