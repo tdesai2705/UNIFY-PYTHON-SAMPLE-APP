@@ -1,9 +1,11 @@
 """
 Simple Flask application for CloudBees Unify CI/CD demo
+Version: 1.1.0-staging
 """
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+app.config['ENV'] = 'staging'
 
 
 @app.route('/')
