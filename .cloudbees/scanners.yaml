@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: scanners
+
+# Explicitly disable scanners
+disabled:
+  - blackduck
+  - blackduck-sca
+
+# Enable only specific scanners you want
+enabled:
+  - gitleaks
+  - gosec
